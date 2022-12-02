@@ -1,0 +1,148 @@
+@import url("https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Cutive+Mono&family=Lobster&family=Lobster+Two:ital,wght@0,400;0,700;1,400;1,700&family=Playball&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+:root {
+  --font-sans-serif: "Poppins", sans-serif;
+  --font-cursive-1: "Lobster", cursive;
+  --font-cursive-2: "Lobster Two", cursive;
+  --font-cursive-3: "Playball", cursive;
+  --font-heading: "Abril Fatface", "Poppins", sans-serif;
+  --font-mono: "Cutive Mono", monospace;
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  font-weight: inherit;
+}
+
+.img-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#mainHeader {
+  display: flex;
+  justify-content: space-between;
+  height: 12.5vh;
+  position: relative;
+  padding: 0 30px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+#mainHeader > * {
+  display: flex;
+  min-width: 20vw;
+}
+#mainHeader .left-btns {
+  justify-content: flex-start;
+  align-items: center;
+}
+#mainHeader .left-btns button {
+  font-family: var(--font-mono);
+  font-size: 1.1rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  background: none;
+  width: 115px;
+  height: 100%;
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+}
+#mainHeader .logo-container {
+  justify-content: center;
+}
+#mainHeader .logo-container h1 {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  justify-content: center;
+}
+#mainHeader .logo-container h1 span:nth-child(1) {
+  font-size: 2rem;
+  letter-spacing: 10px;
+  font-family: var(--font-heading);
+}
+#mainHeader .logo-container h1 span:nth-child(2) {
+  font-weight: normal;
+  font-size: 1.1rem;
+  letter-spacing: 2px;
+  word-spacing: 10px;
+  font-family: var(--font-cursive-2);
+}
+#mainHeader .icon-links {
+  justify-content: flex-end;
+  align-items: center;
+  font-size: 1.3rem;
+}
+#mainHeader .icon-links a {
+  margin: 0 10px;
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
+  height: fit-content;
+}
+#mainHeader .nav-container {
+  position: absolute;
+  visibility: hidden;
+  opacity: 0;
+  bottom: -50vh;
+  height: 50vh;
+  width: 100vw;
+  left: 0;
+  transition: all 0.3s ease;
+  background-color: rgba(255, 255, 255, 0.5);
+  -webkit-backdrop-filter: blur(10px);
+          backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  display: flex;
+}
+#mainHeader .nav-container nav {
+  width: 65%;
+  display: flex;
+  padding: 2%;
+}
+#mainHeader .nav-container nav > div {
+  display: flex;
+  flex-direction: column;
+  margin: 0 30px;
+  height: 100%;
+  min-width: 10vw;
+}
+#mainHeader .nav-container nav > div span {
+  text-transform: uppercase;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 1.2rem;
+  letter-spacing: 4px;
+  word-spacing: 8px;
+  margin-bottom: 15px;
+}
+#mainHeader .nav-container nav > div a {
+  font-family: var(--font-sans-serif);
+  font-weight: 300;
+  font-size: 0.825rem;
+  letter-spacing: 2px;
+  word-spacing: 4px;
+  margin: 5px 0;
+}
+#mainHeader .nav-container .img-container {
+  width: 35%;
+}
+#mainHeader .nav-container .img-container img {
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+#mainHeader .nav-container[aria-hidden=false] {
+  visibility: visible;
+  opacity: 1;
+}
+#mainHeader .nav-container:hover {
+  visibility: visible;
+  opacity: 1;
+}/*# sourceMappingURL=style.css.map */

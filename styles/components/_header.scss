@@ -1,0 +1,121 @@
+#mainHeader {
+  //   background-color: beige;
+  display: flex;
+  justify-content: space-between;
+  height: 12.5vh;
+  position: relative;
+  padding: 0 30px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  & > * {
+    display: flex;
+    min-width: 20vw;
+  }
+  .left-btns {
+    justify-content: flex-start;
+    align-items: center;
+    button {
+      font-family: var(--font-mono);
+      font-size: 1.1rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      background: none;
+      width: 115px;
+      height: 100%;
+      border: none;
+      cursor: pointer;
+      font-weight: 700;
+    }
+  }
+  .logo-container {
+    justify-content: center;
+    h1 {
+      display: flex;
+      flex-direction: column;
+      text-align: center;
+      justify-content: center;
+      span:nth-child(1) {
+        font-size: 2rem;
+        letter-spacing: 10px;
+        font-family: var(--font-heading);
+      }
+      span:nth-child(2) {
+        font-weight: normal;
+        font-size: 1.1rem;
+        letter-spacing: 2px;
+        word-spacing: 10px;
+        font-family: var(--font-cursive-2);
+      }
+    }
+  }
+  .icon-links {
+    justify-content: flex-end;
+    align-items: center;
+    font-size: 1.3rem;
+
+    a {
+      margin: 0 10px;
+      height: fit-content;
+    }
+  }
+  .nav-container {
+    position: absolute;
+    visibility: hidden;
+    opacity: 0;
+    $height: 50vh;
+    bottom: $height * -1;
+    height: $height;
+    width: 100vw;
+    left: 0;
+    transition: all 0.3s ease;
+    background-color: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    display: flex;
+    $navWidth: 65%;
+    nav {
+      width: $navWidth;
+      display: flex;
+      padding: 2%;
+      & > div {
+        display: flex;
+        flex-direction: column;
+        margin: 0 30px;
+        height: 100%;
+        min-width: 10vw;
+
+        // background-color: red;
+        span {
+          text-transform: uppercase;
+          font-family: var(--font-mono);
+          font-weight: 700;
+          font-size: 1.2rem;
+          letter-spacing: 4px;
+          word-spacing: 8px;
+          margin-bottom: 15px;
+        }
+        a {
+          font-family: var(--font-sans-serif);
+          font-weight: 300;
+          font-size: 0.825rem;
+          letter-spacing: 2px;
+          word-spacing: 4px;
+          margin: 5px 0;
+        }
+      }
+    }
+    .img-container {
+      width: 100% - $navWidth;
+      img {
+        object-fit: cover;
+      }
+    }
+  }
+  .nav-container[aria-hidden="false"] {
+    visibility: visible;
+    opacity: 1;
+  }
+  .nav-container:hover {
+    visibility: visible;
+    opacity: 1;
+  }
+}
