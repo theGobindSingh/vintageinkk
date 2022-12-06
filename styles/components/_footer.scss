@@ -1,0 +1,135 @@
+#mainFooter {
+  height: 35vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  @keyframes heartbeat {
+    0% {
+      transform: scale(0.75);
+    }
+    20% {
+      transform: scale(1);
+    }
+    40% {
+      transform: scale(0.75);
+    }
+    60% {
+      transform: scale(1);
+    }
+    80% {
+      transform: scale(0.75);
+    }
+    100% {
+      transform: scale(0.75);
+    }
+  }
+  & > * {
+    width: 100%;
+    display: flex;
+    align-items: center;
+  }
+  .upper-container {
+    background-color: var(--footer-dark);
+    height: 85%;
+    justify-content: space-between;
+    padding: 2% 5%;
+    & > div {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      width: calc(100% / 5);
+      color: white;
+      span {
+        font-family: var(--font-mono);
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 5px;
+        margin-bottom: 20px;
+        font-size: 1.2rem;
+      }
+      a {
+        font-family: var(--font-serif);
+        font-weight: normal;
+        margin: 5px 0;
+        text-transform: capitalize;
+        font-size: 1rem;
+        letter-spacing: 2px;
+      }
+      &:nth-child(4) {
+        justify-content: center;
+        p {
+          font-family: var(--font-sans-serif);
+          text-align: center;
+        }
+        span {
+          font-family: var(--font-cursive-2);
+          font-weight: normal;
+          text-transform: none;
+          text-align: end;
+        }
+      }
+    }
+  }
+  .lower-container {
+    height: 15%;
+    justify-content: center;
+    background-color: var(--accent-color);
+    // padding: 10px 0;
+    font-size: 1.2rem;
+    font-family: var(--font-mono);
+    // font-weight: bold;
+    letter-spacing: 3px;
+    word-spacing: 30px;
+    overflow: hidden;
+    position: relative;
+    span {
+      z-index: 1;
+      -webkit-text-stroke-width: 1px;
+      -webkit-text-stroke-color: black;
+    }
+    svg {
+      height: 1em;
+      width: auto;
+      object-fit: contain;
+      margin: 0 40px;
+      z-index: 0;
+      transition: all 0.3s ease-in-out;
+    }
+
+    &::before {
+      content: "🇮🇳";
+      position: absolute;
+      z-index: 1;
+      left: 51.1vw;
+      opacity: 0;
+    }
+
+    .heart {
+      display: inline-block;
+      animation: heartbeat 1.5s ease 0s infinite normal forwards;
+    }
+    .red.heart {
+      display: none;
+      text-shadow: 0 0 2px black, 0 0 2px black, 0 0 2px black;
+    }
+
+    &:hover {
+      svg {
+        scale: 75;
+        rotate: -45deg;
+        opacity: 0.3;
+      }
+      &::before {
+        opacity: 1;
+      }
+      .red.heart {
+        display: inline-block;
+      }
+      .black.black {
+        display: none;
+      }
+    }
+  }
+}

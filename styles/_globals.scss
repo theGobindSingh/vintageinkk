@@ -15,4 +15,10 @@ a {
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow: hidden;
+}
+
+#__next {
+  width: 100%;
+  overflow-x: hidden;
 }

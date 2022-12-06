@@ -26,6 +26,7 @@ function NavContainer({
           alt={`${name} | ${owner} | ${tagLine}`}
           className="img-biz"
           fill={true}
+          sizes="100%"
         />
       </div>
     </div>
@@ -80,9 +81,9 @@ export default function Header() {
         </button>
       </div>
       <Link className="logo-container" href="/">
-        <h1>
+        <span>
           <span>{name}</span> <span>{tagLine}</span>
-        </h1>
+        </span>
       </Link>
       <div className="icon-links">
         <a
