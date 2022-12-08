@@ -13,10 +13,6 @@ ek hi shaqs tha jahaan mein kya?`;
 export const footerQuoteWriter: string = "Jaun Elia";
 
 //Home Page
-export const bannerText: string = "Uska manzar, Meri aakhen";
-export const bannerImg: string = "/assets/images/sample2.jpg";
-export const bannerUrl: string = "/manzar";
-export const bannerBtnText: string = "Shop manzar products";
 export const moreHeading: string = "Conviction & Purpose";
 export const morePara: string =
   "we believe life's moments are a legacy & we exist to ensure they live on";

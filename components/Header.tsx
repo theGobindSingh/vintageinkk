@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import React, { useState, PropsWithChildren } from "react";
+import React, { useState, PropsWithChildren, useContext } from "react";
 
 import { BsInstagram, BsWhatsapp, BsEnvelope } from "react-icons/bs";
 import { whatsapp, instagram, email, name, tagLine, owner } from "./info";

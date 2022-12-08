@@ -443,6 +443,7 @@ a {
 }
 #Home .customer-reviews .carousal-container .slide-container .stuff-container {
   height: 100%;
+  width: 700px;
   display: flex;
   flex-direction: column;
   align-items: center;
