@@ -3,7 +3,7 @@
   z-index: 9999;
   display: flex;
   justify-content: space-between;
-  height: 12.5vh;
+  height: var(--main-header-height);
   position: relative;
   padding: 0 30px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);

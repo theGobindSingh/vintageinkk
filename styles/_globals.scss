@@ -21,4 +21,9 @@ a {
 #__next {
   width: 100%;
   overflow-x: hidden;
+  & > section {
+    min-height: calc(
+      100vh - var(--main-header-height) - var(--main-footer-height)
+    );
+  }
 }

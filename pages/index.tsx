@@ -41,7 +41,7 @@ export default function Home({
 }: {
   pageProps: { mutations: Array<any>; queries: Array<any> };
 }) {
-  console.log(pageProps);
+  // console.log(pageProps);
   function getDataFromQueryKey(key: string): {
     total?: number;
     skip?: number;
@@ -59,6 +59,7 @@ export default function Home({
     return temp;
   }
   const [sliderNav, setSliderNav] = useState<any>();
+  console.log(pageProps);
   return (
     <section aria-label="Home" id="Home">
       <Head>
@@ -136,7 +137,7 @@ export default function Home({
           >
             {getDataFromQueryKey("customerReviews")?.items.map(
               (customer, index) => {
-                console.log(customer, "yaya");
+                // console.log(customer, "yaya");
                 return (
                   <div className="slide-container" key={index}>
                     <div className="stuff-container">
@@ -158,7 +159,7 @@ export default function Home({
                     </div>
                     <div className="img-container">
                       <Image
-                        src={customer.product.pictureCollection.items[0].url}
+                        src={customer.product.picturesCollection.items[0].url}
                         alt="Product from Vintageinkk"
                         fill
                         sizes="100%"

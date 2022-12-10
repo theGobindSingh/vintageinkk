@@ -2,7 +2,7 @@ import { gql } from "graphql-request";
 
 export const gql_query_allCategories = gql`
   query {
-    categoriesCollection(limit: 6) {
+    categoriesCollection(limit: 6, order: title_ASC) {
       items {
         title
         picture {
@@ -26,7 +26,7 @@ export const gql_query_customerReviews = gql`
           category {
             title
           }
-          pictureCollection(limit: 1) {
+          picturesCollection(limit: 1) {
             items {
               url
             }
@@ -44,6 +44,38 @@ export const gql_query_homeBanner = gql`
         url
         title
         description
+      }
+    }
+  }
+`;
+
+export const gql_query_singleCategory = gql`
+  query ($categoryTitle: String!) {
+    categoriesCollection(where: { title_contains: $categoryTitle }, limit: 1) {
+      items {
+        title
+        picture {
+          url
+        }
+        description
+      }
+    }
+  }
+`;
+
+export const gql_query_productsInCategory = gql`
+  query ($categoryTitle: String!) {
+    productsCollection(
+      where: { category: { title_contains: $categoryTitle } }
+      limit: 100
+    ) {
+      items {
+        title
+        picturesCollection(limit: 1) {
+          items {
+            url
+          }
+        }
       }
     }
   }

@@ -12,8 +12,8 @@ import {
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      // staleTime: 1000 * 60 * 1
-      staleTime: 1000 * 5,
+      staleTime: 1000 * 60 * 1,
+      // staleTime: 1000 * 5,
     },
   },
 });

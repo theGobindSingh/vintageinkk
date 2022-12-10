@@ -1,0 +1,13 @@
+#Error-page {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  span {
+    font-family: var(--font-cursive-1);
+    font-size: 2rem;
+  }
+  .lottie-animation {
+    height: 40vh;
+  }
+}
