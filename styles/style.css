@@ -320,17 +320,20 @@ a {
   display: none;
 }
 
-#Error-page {
+#Error-page,
+#Loading-page {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 }
-#Error-page span {
+#Error-page span,
+#Loading-page span {
   font-family: var(--font-cursive-1);
   font-size: 2rem;
 }
-#Error-page .lottie-animation {
+#Error-page .lottie-animation,
+#Loading-page .lottie-animation {
   height: 40vh;
 }
 
