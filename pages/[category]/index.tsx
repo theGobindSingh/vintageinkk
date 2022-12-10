@@ -16,7 +16,7 @@ import {
 import Error from "../../components/Error";
 import { name } from "../../components/info";
 
-export default function index({
+export default function CategoryPage({
   pageProps,
 }: {
   pageProps: { mutations: Array<any>; queries: Array<any> };

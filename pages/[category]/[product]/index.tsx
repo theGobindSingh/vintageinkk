@@ -14,7 +14,7 @@ import { name } from "../../../components/info";
 
 import { documentToReactComponents } from "@contentful/rich-text-react-renderer";
 
-export default function index({ pageProps }: { pageProps: any }) {
+export default function AboutPage({ pageProps }: { pageProps: any }) {
   // console.log(pageProps);
   const { query } = useRouter();
 
