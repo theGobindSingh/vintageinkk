@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@contentful/rich-text-react-renderer": "^15.16.2",
     "@tanstack/react-query": "^4.19.1",
     "@types/node": "18.11.9",
     "@types/react": "18.0.25",

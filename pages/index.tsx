@@ -59,7 +59,7 @@ export default function Home({
     return temp;
   }
   const [sliderNav, setSliderNav] = useState<any>();
-  console.log(pageProps);
+  // console.log(pageProps);
   return (
     <section aria-label="Home" id="Home">
       <Head>

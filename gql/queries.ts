@@ -80,3 +80,31 @@ export const gql_query_productsInCategory = gql`
     }
   }
 `;
+
+export const gql_query_singleProduct = gql`
+  query ($productTitle: String!, $categoryTitle: String!) {
+    productsCollection(
+      where: {
+        title_contains: $productTitle
+        category: { title_contains: $categoryTitle }
+      }
+      limit: 1
+    ) {
+      items {
+        title
+        instagramLink
+        category {
+          title
+        }
+        description {
+          json
+        }
+        picturesCollection(limit: 10) {
+          items {
+            url
+          }
+        }
+      }
+    }
+  }
+`;

@@ -24,7 +24,7 @@ export default function index({
   // console.log(pageProps);
   const router = useRouter();
   var category: string = String(router.query.category).replaceAll("-", "_");
-  console.log(pageProps);
+  // console.log(pageProps);
   function dataFromKeys(keys: Array<string>) {
     for (let i: number = 0; i < pageProps.queries.length; i++) {
       if (pageProps.queries[i].queryKey.length == keys.length) {
@@ -52,9 +52,11 @@ export default function index({
     category.toLowerCase(),
     "products",
   ]).productsCollection.items;
+
   if (selfItems.length == 0 || productItems.length == 0) {
     return <Error />;
   }
+
   return (
     <section id="category-page">
       <Head>
@@ -95,7 +97,7 @@ export default function index({
               key={index}
               href={
                 "/" +
-                category.toLowerCase() +
+                category.toLowerCase().trim().replaceAll("_", "-") +
                 "/" +
                 product.title.toLowerCase().trim().replaceAll(" ", "-")
               }
