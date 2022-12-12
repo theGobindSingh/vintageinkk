@@ -72,3 +72,25 @@
     }
   }
 }
+@media screen and (max-width: 900px) {
+  #product-page {
+    width: 100%;
+    flex-direction: column-reverse;
+    padding: 5%;
+    .product-container {
+      width: 100%;
+      height: auto;
+      display: flex;
+      flex-direction: column;
+    }
+    .gallery-container {
+      margin: 50px 0;
+      width: 100%;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      .img-container {
+        border-radius: 10px;
+      }
+    }
+  }
+}

@@ -127,8 +127,72 @@
       .red.heart {
         display: inline-block;
       }
-      .black.black {
+      .black.heart {
         display: none;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 900px) {
+  #mainFooter {
+    height: auto;
+    .upper-container {
+      padding: 30px 5%;
+      display: grid;
+      row-gap: 50px;
+      grid-template-columns: repeat(2, 1fr);
+      & > div {
+        width: 100%;
+        min-height: 20vh;
+        overflow: hidden;
+        span {
+          font-size: 1rem;
+        }
+        a {
+          font-size: 0.8rem;
+          &[href^="mailto:"]:nth-of-type(2) {
+            font-size: 0.5rem;
+            line-height: 1rem;
+          }
+        }
+        &.quote > p {
+          text-align: right;
+          font-size: 0.8rem;
+        }
+      }
+      .social {
+        grid-column-start: 2;
+        grid-row-start: 1;
+      }
+    }
+    .lower-container {
+      min-height: 10vh;
+      font-size: 0.9rem;
+      letter-spacing: normal;
+      word-spacing: normal;
+      svg {
+        margin: 0 10px;
+      }
+      .black.heart {
+        display: none;
+        text-shadow: 0 0 2px black, 0 0 2px black, 0 0 2px black;
+      }
+      .red.heart {
+        display: inline-block;
+      }
+      &:hover {
+        .black.heart {
+          display: inline-block;
+        }
+        .red.heart {
+          display: none;
+        }
+        svg {
+          scale: 30;
+          rotate: -45deg;
+          opacity: 0.3;
+        }
       }
     }
   }

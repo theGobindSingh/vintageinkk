@@ -3,6 +3,9 @@
   margin: 0;
   box-sizing: border-box;
 }
+body {
+  background-color: white;
+}
 
 a {
   color: inherit;
@@ -25,5 +28,20 @@ a {
     min-height: calc(
       100vh - var(--main-header-height) - var(--main-footer-height)
     );
+  }
+}
+
+@media screen and (min-width: 900px) {
+  .no-pc {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+  }
+}
+@media screen and (max-width: 900px) {
+  .no-mobile {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
   }
 }
