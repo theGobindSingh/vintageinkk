@@ -151,21 +151,13 @@ export default function Header() {
             {navHidden.navShop ? <span>v</span> : <span>^</span>}
           </button>
           <nav className="nav-shop" aria-hidden={navHidden.navShop}>
-            <Link href="/decor" onClick={mobOnClickLink}>
-              Decor
-            </Link>
-            <Link href="/hampers" onClick={mobOnClickLink}>
-              Hampers
-            </Link>
-            <Link href="/manzar" onClick={mobOnClickLink}>
-              Manzar
-            </Link>
-            <Link href="/soy-candles" onClick={mobOnClickLink}>
-              Soy Candles
-            </Link>
-            <Link href="/vintage-collection" onClick={mobOnClickLink}>
-              Vintage Collection
-            </Link>
+            {categories.map((category, index) => {
+              return (
+                <Link key={index} href={"/" + category.title.toLowerCase().replace(" ", "-")} onClick={mobOnClickLink}>
+                  {category.title}
+                </Link>
+              );
+            })}
           </nav>
           <button
             type="button"
