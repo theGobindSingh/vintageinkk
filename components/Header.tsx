@@ -4,43 +4,32 @@ import React, { useState, PropsWithChildren } from "react";
 
 import { BsInstagram, BsWhatsapp, BsEnvelope } from "react-icons/bs";
 import { whatsapp, instagram, email, name, tagLine, owner } from "./info";
+import useAllCategories from "../hooks/use-all-categories";
 
 interface navProps {
   navHidden: boolean;
   imgSrc: string;
 }
-function NavContainer({
-  children,
-  navHidden,
-  imgSrc,
-}: PropsWithChildren<navProps>) {
+function NavContainer({ children, navHidden, imgSrc }: PropsWithChildren<navProps>) {
   return (
-    <div
-      className="nav-container"
-      aria-hidden={navHidden == true ? "true" : "false"}
-    >
+    <div className="nav-container" aria-hidden={navHidden == true ? "true" : "false"}>
       <nav>{children}</nav>
       <div className="img-container">
-        <Image
-          src={imgSrc}
-          alt={`${name} | ${owner} | ${tagLine}`}
-          className="img-biz"
-          fill={true}
-          sizes="100%"
-        />
+        <Image src={imgSrc} alt={`${name} | ${owner} | ${tagLine}`} className="img-biz" fill={true} sizes="100%" />
       </div>
     </div>
   );
 }
 
 export default function Header() {
+  const [categories] = useAllCategories();
   interface imageHiddenProps {
     navShop: boolean;
     navAbout: boolean;
   }
   const [navHidden, setNavHidden] = useState<imageHiddenProps>({
     navShop: true,
-    navAbout: true,
+    navAbout: true
   });
   function mobOnClickLink() {
     try {
@@ -93,18 +82,10 @@ export default function Header() {
           </span>
         </Link>
         <div className="icon-links">
-          <a
-            href={`http://instagram.com/${instagram}`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <a href={`http://instagram.com/${instagram}`} target="_blank" rel="noopener noreferrer">
             <BsInstagram />
           </a>
-          <a
-            href={`http://wa.me/${whatsapp}`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <a href={`http://wa.me/${whatsapp}`} target="_blank" rel="noopener noreferrer">
             <BsWhatsapp />
           </a>
           <a href={`mailto:${email}`} target="_blank" rel="noopener noreferrer">
@@ -112,29 +93,29 @@ export default function Header() {
           </a>
         </div>
         <NavContainer
-          imgSrc="/assets/images/DP.jpg"
+          imgSrc="https://images.ctfassets.net/eqnacuxu5oog/7aEatmkX15Dqzpi4MU1mzf/f58ac0b4425561d04e5d870095cc6791/cat1.webp"
           navHidden={navHidden.navShop}
         >
           <div>
             <span className="nav-head">Categories</span>
-            <Link href="/decor">Décor</Link>
-            <Link href="/hampers">Hampers</Link>
-            <Link href="/manzar">Manzar</Link>
-            <Link href="/soy-candles">Soy Candles</Link>
-            <Link href="/vintage-collection">Vintage Collection</Link>
+            {categories.map((category, index) => {
+              return (
+                <Link key={index} href={"/" + category.title.toLowerCase().replace(" ", "-")}>
+                  {category.title}
+                </Link>
+              );
+            })}
           </div>
-          <div>
-            <span className="nav-head">Manzar Products</span>
+          {/* <div>
+            <span className="nav-head">{categories?.[1]?.title ?? ""} Products</span>
             <Link href="/manzar/birthday-post-cards">Birthday Post Cards</Link>
-            <Link href="/manzar/typewritten-letters">
-              Typewritten letters / poems
-            </Link>
+            <Link href="/manzar/typewritten-letters">Typewritten letters / poems</Link>
             <Link href="/manzar/vintage-mini-album">Vintage mini album</Link>
             <Link href="/manzar/wedding-invites">Wedding invites / tags</Link>
-          </div>
+          </div> */}
         </NavContainer>
         <NavContainer
-          imgSrc="/assets/images/adeeba.jpg"
+          imgSrc="https://images.ctfassets.net/eqnacuxu5oog/1ulKSelvki1i3XnH5tD7tq/92afddef0ca76be6d5b5b11fa9ef7243/temp4.webp"
           navHidden={navHidden.navAbout}
         >
           <div>
@@ -161,7 +142,7 @@ export default function Header() {
               setNavHidden((prevNavState) => {
                 return {
                   ...prevNavState,
-                  navShop: !prevNavState.navShop,
+                  navShop: !prevNavState.navShop
                 };
               });
             }}
@@ -192,7 +173,7 @@ export default function Header() {
               setNavHidden((prevNavState) => {
                 return {
                   ...prevNavState,
-                  navAbout: !prevNavState.navAbout,
+                  navAbout: !prevNavState.navAbout
                 };
               });
             }}
@@ -209,9 +190,7 @@ export default function Header() {
         <div
           className="burger"
           onClick={() => {
-            document
-              .querySelector(".side-nav-wrapper")
-              ?.classList.toggle("active");
+            document.querySelector(".side-nav-wrapper")?.classList.toggle("active");
           }}
         >
           <div className="line-1"></div>

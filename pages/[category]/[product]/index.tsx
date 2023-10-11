@@ -1,5 +1,5 @@
 import React from "react";
-import { GetServerSideProps } from "next";
+import { GetStaticPaths, GetStaticProps } from "next";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import Head from "next/head";
@@ -7,79 +7,45 @@ import Head from "next/head";
 import Error from "../../../components/Error";
 
 import { dehydrate } from "@tanstack/react-query";
-import { queryClient } from "../../_app";
+import { queryClient } from "../../../clients";
 import graphqlRequestClient from "../../../gql/graphqlRequestClient";
 import { gql_query_singleProduct } from "../../../gql/queries";
 import { name } from "../../../components/info";
 
 import { documentToReactComponents } from "@contentful/rich-text-react-renderer";
+import { getDataFromQueryCache } from "../../../utils";
+import { getAllProducts, getSingleProduct } from "../../../apis";
 
-export default function AboutPage({ pageProps }: { pageProps: any }) {
-  // console.log(pageProps);
+interface ProductsCollection {
+  title: string;
+  description: { json: any };
+  instagramLink: string;
+  picturesCollection: {
+    items: { url: string }[];
+  };
+  category: { title: string };
+}
+export default function AboutPage() {
   const { query } = useRouter();
-
-  interface productsCollection {
-    title: string;
-    description: { json: any };
-    instagramLink: string;
-    picturesCollection: {
-      items: { url: string }[];
-    };
-    category: { title: string };
-  }
-  function itemFromKeys(keys: string[]): productsCollection | undefined {
-    for (let i: number = 0; i < pageProps.queries.length; i++) {
-      if (pageProps.queries[i].queryKey.length == keys.length) {
-        if (String(pageProps.queries[i].queryHash) == JSON.stringify(keys)) {
-          if (
-            pageProps.queries[i].state.data.productsCollection.items.length == 0
-          ) {
-            return undefined;
-          } else {
-            return pageProps.queries[i].state.data.productsCollection.items[0];
-          }
-        }
-      }
-    }
-    return undefined;
-  }
-  var allContent = itemFromKeys([
-    String(query.category).replaceAll("-", "_"),
-    "products",
-    String(query.product).replaceAll("-", "_"),
-  ]);
-  // console.log(allContent);
-  if (allContent == undefined) {
+  const data = getDataFromQueryCache([query?.category, "products", query?.product]);
+  const itemsData: ProductsCollection[] = data?.productsCollection?.items ?? [];
+  if (itemsData?.length === 0) {
     return <Error />;
   }
+  const product = itemsData[0];
   return (
     <section id="product-page">
       <Head>
-        <title>
-          {name +
-            " | Shop | " +
-            allContent.category.title +
-            " | " +
-            allContent.title}
-        </title>
-        <meta
-          name="description"
-          content={
-            name +
-            " | Shop our " +
-            allContent.title +
-            " | " +
-            allContent.category.title
-          }
-        />
+        <title>{name + " | Shop | " + product.category.title + " | " + product.title}</title>
+        <meta name="description" content={name + " | Shop our " + product.title + " | " + product.category.title} />
       </Head>
       <div className="gallery-container">
-        {allContent.picturesCollection.items.map((picture, index) => {
+        {product.picturesCollection.items.map((picture, index) => {
           return (
             <div className="img-container" key={index}>
               <Image
                 src={picture.url}
-                alt={`${name} | Shop ${allContent?.category.title} Products | ${allContent?.title}`}
+                alt={`${name} | Shop ${product?.category.title} Products | ${product?.title}`}
                 fill
                 sizes="100%"
               />
@@ -88,38 +54,45 @@ export default function AboutPage({ pageProps }: { pageProps: any }) {
         })}
       </div>
       <main className="product-container">
-        <h1>{allContent.title}</h1>
-        <a
-          href={allContent.instagramLink}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="shop-instagram-link"
-        >
-          Shop {allContent.title} now
+        <h1>{product.title}</h1>
+        <a href={product.instagramLink} target="_blank" rel="noopener noreferrer" className="shop-instagram-link">
+          Shop {product.title} now
         </a>
-        {documentToReactComponents(allContent.description.json)}
+        {documentToReactComponents(product.description.json)}
       </main>
     </section>
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ query }) => {
-  var category: string = String(query.category).replaceAll("-", " ");
-  var product: string = String(query.product).replaceAll("-", " ");
+export const getStaticProps: GetStaticProps = async ({ params }) => {
+  const category = params?.category as string;
+  const product = params?.product as string;
 
-  //get product
-  async function getProduct() {
-    return await graphqlRequestClient.request(gql_query_singleProduct, {
-      categoryTitle: category,
-      productTitle: product,
+  const a = await queryClient.prefetchQuery([category, "products", product], getSingleProduct(category, product));
+  return {
+    props: { dehydratedState: dehydrate(queryClient) }
+  };
+};
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const paths: {
+    params: {
+      category: string;
+      product: string;
+    };
+  }[] = [];
+  const rawData = await getAllProducts();
+  const rawItems = rawData?.productsCollection?.items ?? [];
+  for (const item of rawItems) {
+    paths.push({
+      params: {
+        category: ((item?.category?.title as string) ?? "").replace(/\s/gm, "-").toLowerCase(),
+        product: ((item?.title as string) ?? "").replace(/\s/gm, "-").toLowerCase()
+      }
     });
   }
-  await queryClient.prefetchQuery(
-    [category.replaceAll(" ", "_"), "products", product.replaceAll(" ", "_")],
-    getProduct
-  );
-
   return {
-    props: { pageProps: dehydrate(queryClient) },
+    paths: paths,
+    fallback: false
   };
 };

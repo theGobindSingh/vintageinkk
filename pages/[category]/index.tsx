@@ -1,88 +1,70 @@
 import React from "react";
-import { GetServerSideProps } from "next";
+import type { GetStaticPaths, GetStaticProps } from "next";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import Head from "next/head";
 import Link from "next/link";
 
-import { queryClient } from "../_app";
+import { queryClient } from "../../clients";
 import { dehydrate } from "@tanstack/react-query";
 import graphqlRequestClient from "../../gql/graphqlRequestClient";
-import {
-  gql_query_productsInCategory,
-  gql_query_singleCategory,
-} from "../../gql/queries";
+import { gql_query_productsInCategory, gql_query_singleCategory } from "../../gql/queries";
 
 import Error from "../../components/Error";
 import { name } from "../../components/info";
+import { getAllCategories } from "../../apis";
+import { getDataFromQueryCache } from "../../utils";
 
-export default function CategoryPage({
-  pageProps,
-}: {
-  pageProps: { mutations: Array<any>; queries: Array<any> };
-}) {
+interface productsCollection {
+  title: string;
+  picturesCollection: {
+    items: Array<{ url: string }>;
+  };
+}
+export default function CategoryPage() {
   // console.log(pageProps);
   const router = useRouter();
-  var category: string = String(router.query.category).replaceAll("-", "_");
-  // console.log(pageProps);
-  function dataFromKeys(keys: Array<string>) {
-    for (let i: number = 0; i < pageProps.queries.length; i++) {
-      if (pageProps.queries[i].queryKey.length == keys.length) {
-        if (pageProps.queries[i].queryHash == JSON.stringify(keys)) {
-          return pageProps.queries[i].state.data;
-        }
-      }
-    }
-    return;
-  }
-
-  interface productsCollection {
-    title: string;
-    picturesCollection: {
-      items: Array<{ url: string }>;
-    };
-  }
-  var selfItems: Array<{
+  const pageName = router.query.category as string;
+  const productDataFromApi = getDataFromQueryCache([pageName, "products"]);
+  const selfDataFromApi = getDataFromQueryCache([pageName, "self"]);
+  const selfDataItems = selfDataFromApi?.categoriesCollection?.items ?? [];
+  let selfData: {
     title: string;
     description: string;
     picture: { url: string };
-  }> = dataFromKeys([category.toLowerCase(), "self"]).categoriesCollection
-    .items;
-  var productItems: Array<productsCollection> = dataFromKeys([
-    category.toLowerCase(),
-    "products",
-  ]).productsCollection.items;
-
-  if (selfItems.length == 0 || productItems.length == 0) {
+  } = {
+    title: "Loading...",
+    description: "Loading...",
+    picture: { url: "" }
+  };
+  if (selfDataItems.length > 0) {
+    selfData = {
+      title: selfDataItems[0].title,
+      description: selfDataItems[0].description,
+      picture: selfDataItems[0].picture
+    };
+  }
+  const productsCollection: productsCollection[] = productDataFromApi?.productsCollection?.items ?? [];
+  // return <></>;
+  if (selfDataItems.length == 0 || productsCollection.length == 0) {
     return <Error />;
   }
 
   return (
     <section id="category-page">
       <Head>
-        <title>{name + " | Shop " + selfItems[0].title}</title>
-        <meta
-          name="description"
-          content={
-            name + " | " + selfItems[0].title + " | " + selfItems[0].description
-          }
-        />
+        <title>{name + " | Shop " + selfData.title}</title>
+        <meta name="description" content={name + " | " + selfData.title + " | " + selfData.description} />
       </Head>
       <main>
         <div className="stuff-container">
-          <h1>{selfItems[0].title}</h1>
-          <p>{selfItems[0].description}</p>
+          <h1>{selfData.title}</h1>
+          <p>{selfData.description}</p>
         </div>
         <div className="img-container">
           <Image
-            src={selfItems[0].picture.url}
-            alt={
-              name +
-              " | " +
-              selfItems[0].title +
-              " | " +
-              selfItems[0].description
-            }
+            src={selfData.picture.url}
+            alt={name + " | " + selfData.title + " | " + selfData.description}
             fill
             sizes="100%"
             priority
@@ -90,17 +72,12 @@ export default function CategoryPage({
         </div>
       </main>
       <div className="products-container">
-        {productItems.map((product, index) => {
+        {productsCollection.map((product, index) => {
           return (
             <Link
               className="product"
               key={index}
-              href={
-                "/" +
-                category.toLowerCase().trim().replaceAll("_", "-") +
-                "/" +
-                product.title.toLowerCase().trim().replaceAll(" ", "-")
-              }
+              href={"/" + pageName + "/" + product.title.toLowerCase().trim().replaceAll(" ", "-")}
             >
               <div className="img-container">
                 <Image
@@ -119,37 +96,43 @@ export default function CategoryPage({
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async ({
-  resolvedUrl,
-}) => {
-  const categoryName = resolvedUrl
-    .replaceAll("/", "")
-    .replaceAll("-", " ")
-    .toLowerCase();
+export const getStaticProps: GetStaticProps = async ({ params }) => {
+  const category = params?.category as string;
+  const categoryName = category.replace(/-/gm, " ").toLowerCase();
   //about category
   async function getCategory() {
     return await graphqlRequestClient.request(gql_query_singleCategory, {
-      categoryTitle: categoryName,
+      categoryTitle: categoryName
     });
   }
-  await queryClient.prefetchQuery(
-    [categoryName.replaceAll(" ", "_"), "self"],
-    getCategory
-  );
+  await queryClient.prefetchQuery([categoryName.replaceAll(" ", "-"), "self"], getCategory);
   //all products in category
   async function getAllProducts() {
     return await graphqlRequestClient.request(gql_query_productsInCategory, {
-      categoryTitle: categoryName,
+      categoryTitle: categoryName
     });
   }
-  await queryClient.prefetchQuery(
-    [categoryName.replaceAll(" ", "_"), "products"],
-    getAllProducts
-  );
-
+  await queryClient.prefetchQuery([categoryName.replaceAll(" ", "-"), "products"], getAllProducts);
+  const dehydrated = dehydrate(queryClient);
   return {
     props: {
-      pageProps: dehydrate(queryClient),
-    },
+      dehydratedState: dehydrated
+    }
+  };
+};
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const rawData = await getAllCategories();
+  const paths: { params: { category: string } }[] = [];
+  if (rawData) {
+    const items = rawData?.categoriesCollection?.items ?? [];
+    const titles: string[] = items.map((item: any) => item?.title?.toLowerCase().replace(/\s/gm, "-"));
+    for (const title of titles) {
+      paths.push({ params: { category: title } });
+    }
+  }
+  return {
+    paths: paths,
+    fallback: false
   };
 };

@@ -65,10 +65,7 @@ export const gql_query_singleCategory = gql`
 
 export const gql_query_productsInCategory = gql`
   query ($categoryTitle: String!) {
-    productsCollection(
-      where: { category: { title_contains: $categoryTitle } }
-      limit: 100
-    ) {
+    productsCollection(where: { category: { title_contains: $categoryTitle } }, limit: 100) {
       items {
         title
         picturesCollection(limit: 1) {
@@ -84,10 +81,7 @@ export const gql_query_productsInCategory = gql`
 export const gql_query_singleProduct = gql`
   query ($productTitle: String!, $categoryTitle: String!) {
     productsCollection(
-      where: {
-        title_contains: $productTitle
-        category: { title_contains: $categoryTitle }
-      }
+      where: { title_contains: $productTitle, category: { title_contains: $categoryTitle } }
       limit: 1
     ) {
       items {
@@ -103,6 +97,19 @@ export const gql_query_singleProduct = gql`
           items {
             url
           }
+        }
+      }
+    }
+  }
+`;
+
+export const gql_query_getAllProducts = gql`
+  query {
+    productsCollection(limit: 100) {
+      items {
+        title
+        category {
+          title
         }
       }
     }

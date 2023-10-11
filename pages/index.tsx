@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { GetServerSideProps } from "next";
+import type { GetStaticProps } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
@@ -8,24 +8,13 @@ import Slider from "react-slick";
 import { BsCaretLeftFill, BsCaretRightFill } from "react-icons/bs";
 import { bizDesc, moreHeading, morePara, name } from "../components/info";
 
-import {
-  gql_query_allCategories,
-  gql_query_customerReviews,
-  gql_query_homeBanner,
-} from "../gql/queries";
 import { dehydrate } from "@tanstack/react-query";
-import graphqlRequestClient from "../gql/graphqlRequestClient";
-import { queryClient } from "../pages/_app";
+import { queryClient } from "../clients";
+import { getAllCategories, getCustomerReviews, getHomeBanner } from "../apis";
+import useAllCategories from "../hooks/use-all-categories";
+import { getDataFromQueryCache } from "../utils";
 
-function CategoryCard({
-  text,
-  imgURL,
-  link,
-}: {
-  text: string;
-  imgURL: string;
-  link: string;
-}) {
+function CategoryCard({ text, imgURL, link }: { text: string; imgURL: string; link: string }) {
   return (
     <Link className="category-card" href={link}>
       <div className="img-container">
@@ -36,30 +25,24 @@ function CategoryCard({
   );
 }
 
-export default function Home({
-  pageProps,
-}: {
-  pageProps: { mutations: Array<any>; queries: Array<any> };
-}) {
-  // console.log(pageProps);
-  function getDataFromQueryKey(key: string): {
-    total?: number;
-    skip?: number;
-    limit?: number;
-    items: Array<any>;
-  } {
-    var index: number = 0;
-    for (let i: number = 0; i < pageProps.queries.length; i++) {
-      if (key == pageProps.queries[i].queryKey[0]) {
-        index = i;
-        break;
-      }
-    }
-    var temp: any = Object.values(pageProps.queries[index].state.data)[0];
-    return temp;
+export default function Home() {
+  const [categories] = useAllCategories();
+  const customerReviewsData: any = getDataFromQueryCache(["customerReviews"]);
+  const homeBannerData: any = getDataFromQueryCache(["homeBanner"]);
+  const customerReviews: any[] = customerReviewsData?.customerReviewsCollection?.items ?? [];
+
+  const homeBannerItems: { url: string; title: string; description: string }[] =
+    homeBannerData?.assetCollection?.items ?? [];
+  let homeBannerUrl = "";
+  let homeBannerDescription = "";
+  let homeBannerTitle = "";
+  if (homeBannerItems.length > 0) {
+    homeBannerUrl = homeBannerItems[0]?.url ?? "";
+    homeBannerDescription = homeBannerItems[0]?.description ?? "";
+    homeBannerTitle = homeBannerItems[0]?.title ?? "";
   }
+
   const [sliderNav, setSliderNav] = useState<any>();
-  // console.log(pageProps);
   return (
     <section aria-label="Home" id="Home">
       <Head>
@@ -75,50 +58,27 @@ export default function Home({
         <div className="home-banner img-container">
           <Image
             priority
-            src={getDataFromQueryKey("homeBanner")?.items[0]?.url}
+            src={homeBannerUrl}
             fill
             sizes="100%"
-            alt={
-              name +
-              " | " +
-              getDataFromQueryKey("homeBanner")
-                ?.items[0]?.description.split("\n")[2]
-                .replace("button: ", "") +
-              " | " +
-              bizDesc
-            }
+            alt={name + " | " + homeBannerDescription.split("\n")[2].replace("button: ", "") + " | " + bizDesc}
           />
-          <span>
-            {getDataFromQueryKey("homeBanner")
-              ?.items[0]?.description.split("\n")[1]
-              .replace("tagline:", "")
-              .trim()}
-          </span>
-          <Link
-            href={getDataFromQueryKey("homeBanner")
-              ?.items[0]?.description.split("\n")[0]
-              .replace("link:", "")
-              .trim()}
-          >
-            {getDataFromQueryKey("homeBanner")
-              ?.items[0]?.description.split("\n")[2]
-              .replace("button:", "")
-              .trim()}
+          <span>{homeBannerDescription.split("\n")[1].replace("tagline:", "").trim()}</span>
+          <Link href={homeBannerDescription.split("\n")[0].replace("link:", "").trim()}>
+            {homeBannerDescription.split("\n")[2].replace("button:", "").trim()}
           </Link>
         </div>
         <div className="category-cards">
-          {getDataFromQueryKey("allCategories")?.items?.map(
-            (category: any, index: any) => {
-              return (
-                <CategoryCard
-                  imgURL={category?.picture?.url}
-                  link={"/" + category?.title.toLowerCase().replace(" ", "-")}
-                  text={"Shop " + category?.title}
-                  key={index}
-                />
-              );
-            }
-          )}
+          {categories.map((category: any, index: any) => {
+            return (
+              <CategoryCard
+                imgURL={category?.picture?.url}
+                link={"/" + category?.title.toLowerCase().replace(" ", "-")}
+                text={"Shop " + category?.title}
+                key={index}
+              />
+            );
+          })}
         </div>
         <div className="customer-reviews">
           <Slider
@@ -135,40 +95,35 @@ export default function Home({
             focusOnSelect={false}
             ref={(ref: any) => setSliderNav(ref)}
           >
-            {getDataFromQueryKey("customerReviews")?.items.map(
-              (customer, index) => {
-                // console.log(customer, "yaya");
-                return (
-                  <div className="slide-container" key={index}>
-                    <div className="stuff-container">
-                      <h2>From our guests</h2>
-                      <p>{customer.review.json.content[0].content[0].value}</p>
-                      <p>{"~ " + customer.customerName}</p>
-                      <Link
-                        href={
-                          "/" +
-                          customer.product.category.title
-                            .toLowerCase()
-                            .replace(" ", "-") +
-                          "/" +
-                          customer.product.title.toLowerCase().replace(" ", "-")
-                        }
-                      >
-                        {"Shop " + customer.product.title}
-                      </Link>
-                    </div>
-                    <div className="img-container">
-                      <Image
-                        src={customer.product.picturesCollection.items[0].url}
-                        alt="Product from Vintageinkk"
-                        fill
-                        sizes="100%"
-                      />
-                    </div>
+            {customerReviews.map((customer, index) => {
+              return (
+                <div className="slide-container" key={index}>
+                  <div className="stuff-container">
+                    <h2>From our guests</h2>
+                    <p>{customer.review.json.content[0].content[0].value}</p>
+                    <p>{"~ " + customer.customerName}</p>
+                    <Link
+                      href={
+                        "/" +
+                        customer.product.category.title.toLowerCase().replace(" ", "-") +
+                        "/" +
+                        customer.product.title.toLowerCase().replace(" ", "-")
+                      }
+                    >
+                      {"Shop " + customer.product.title}
+                    </Link>
                   </div>
-                );
-              }
-            )}
+                  <div className="img-container">
+                    <Image
+                      src={customer.product.picturesCollection.items[0].url}
+                      alt="Product from Vintageinkk"
+                      fill
+                      sizes="100%"
+                    />
+                  </div>
+                </div>
+              );
+            })}
           </Slider>
           <div className="btns-container">
             <button
@@ -199,28 +154,14 @@ export default function Home({
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async () => {
-  //all categories
-  async function getAllCategories() {
-    return await graphqlRequestClient.request(gql_query_allCategories);
-  }
+export const getStaticProps: GetStaticProps = async () => {
   await queryClient.prefetchQuery(["allCategories"], getAllCategories);
-
-  // customer reviews
-  async function getCustomerReviews() {
-    return await graphqlRequestClient.request(gql_query_customerReviews);
-  }
   await queryClient.prefetchQuery(["customerReviews"], getCustomerReviews);
-
-  //homebanner
-  async function getHomeBanner() {
-    return await graphqlRequestClient.request(gql_query_homeBanner);
-  }
   await queryClient.prefetchQuery(["homeBanner"], getHomeBanner);
-
+  const dehydrated = dehydrate(queryClient);
   return {
     props: {
-      pageProps: dehydrate(queryClient),
-    },
+      dehydratedState: dehydrated
+    }
   };
 };
